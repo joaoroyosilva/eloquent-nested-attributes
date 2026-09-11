@@ -21,6 +21,9 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
   has a `report()` helper) and the original exception is rethrown. When the server has already
   ended the transaction, the level counter is realigned to zero without issuing SQL.
 - The transaction now runs on the model's own connection instead of the default one.
+- A NEW nested child (HasMany/MorphMany) whose `save()` answers `false` now makes the parent's
+  `save()` answer `false` and roll back. It used to be skipped silently: `create()` returns the model
+  even when its save is refused, so the parent was committed without the child and reported success.
 
 ### Removed
 - Nothing

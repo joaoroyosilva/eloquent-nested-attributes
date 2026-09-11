@@ -221,11 +221,12 @@ trait HasNestedAttributesTrait
             }
 
             return $model->update($params);
-        } elseif ($relation->create($params)) {
-            return true;
         }
 
-        return false;
+        // `make()->save()` and not `create()`: `create()` returns the model even when its `save()`
+        // answers `false` (a `saving` listener cancelling), so a refused new child used to be
+        // skipped silently — the parent was committed without it and reported success.
+        return $relation->make($params)->save();
     }
 
     /**
