@@ -13,7 +13,14 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Nothing
 
 ### Fixed
-- Nothing
+- `save()` no longer leaves a transaction level open when it fails. It now rolls back to the
+  level it was called at when the save throws and when it answers `false` (a `saving` listener
+  cancelling, or a nested child update refusing). Before, the open level turned the caller's
+  `commit()` into a savepoint release and made the caller's `rollBack()` undo the wrong level.
+- A failing rollback no longer replaces the exception that caused it: it is reported (when the app
+  has a `report()` helper) and the original exception is rethrown. When the server has already
+  ended the transaction, the level counter is realigned to zero without issuing SQL.
+- The transaction now runs on the model's own connection instead of the default one.
 
 ### Removed
 - Nothing
